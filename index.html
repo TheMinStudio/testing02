@@ -11,6 +11,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            gap: 20px;
         }
 
         .btn {
@@ -19,7 +20,7 @@
             padding: 14px 32px;
             font-size: 16px;
             color: #fff;
-            background: #238636; /* GitHub green */
+            background: #238636;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -30,18 +31,15 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        /* เมื่อเอาเมาส์ชี้ / สัมผัส */
         .btn:hover {
             background: #2ea043;
         }
 
-        /* ตอนกด */
         .btn:active {
             transform: scale(0.96);
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
 
-        /* Ripple */
         .ripple {
             position: absolute;
             border-radius: 50%;
@@ -57,13 +55,23 @@
                 opacity: 0;
             }
         }
+
+        a {
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
 
+<!-- ปุ่ม Ripple -->
 <button class="btn" onclick="rippleEffect(event)">
     กดปุ่ม
 </button>
+
+<!-- ปุ่มไปหน้าถัดไป -->
+<a href="24game.html">
+    <button class="btn">ไปหน้าถัดไป</button>
+</a>
 
 <script>
 function rippleEffect(e) {
