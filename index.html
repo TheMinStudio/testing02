@@ -11,7 +11,6 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            gap: 20px;
         }
 
         .btn {
@@ -37,7 +36,6 @@
 
         .btn:active {
             transform: scale(0.96);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
 
         .ripple {
@@ -55,27 +53,19 @@
                 opacity: 0;
             }
         }
-
-        a {
-            text-decoration: none;
-        }
     </style>
 </head>
 <body>
 
-<!-- ปุ่ม Ripple -->
-<button class="btn" onclick="rippleEffect(event)">
+<button class="btn" onclick="goNextPage(event)">
     กดปุ่ม
 </button>
 
-<!-- ปุ่มไปหน้าถัดไป -->
-<a href="24game.html">
-    <button class="btn">ไปหน้าถัดไป</button>
-</a>
-
 <script>
-function rippleEffect(e) {
+function goNextPage(e) {
     const button = e.currentTarget;
+
+    // Ripple
     const circle = document.createElement("span");
     const diameter = Math.max(button.clientWidth, button.clientHeight);
     const radius = diameter / 2;
@@ -89,6 +79,11 @@ function rippleEffect(e) {
     if (ripple) ripple.remove();
 
     button.appendChild(circle);
+
+    // ไปหน้าถัดไปหลัง 300ms
+    setTimeout(() => {
+        window.location.href = "24game.html";
+    }, 300);
 }
 </script>
 
