@@ -2,43 +2,110 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>ฟอร์มจอง</title>
+<title>จองเกม 24</title>
+
 <style>
 body {
-    background: #0d1117;
-    color: white;
-    font-family: Arial;
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #0d1117, #161b22);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    font-family: Arial, sans-serif;
 }
-.container {
+
+.card {
     background: #161b22;
-    padding: 30px;
-    border-radius: 10px;
-    width: 320px;
+    padding: 35px;
+    border-radius: 14px;
+    width: 340px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: fadeIn 0.6s ease;
 }
-input, button {
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #8b949e;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+input {
     width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-}
-button {
-    background: #238636;
+    padding: 12px;
+    margin-top: 12px;
+    background: #0d1117;
     color: white;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2ea043;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 18px;
+    background: linear-gradient(135deg, #238636, #2ea043);
+    color: white;
+    font-size: 16px;
     border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(46,160,67,0.4);
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+button:disabled {
+    background: #444;
+    cursor: not-allowed;
+}
+
+.status {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h2>ฟอร์มจอง</h2>
+<div class="card">
+    <h2>🎮 จองเกม 24</h2>
+    <div class="subtitle">กรอกข้อมูลเพื่อจองการเล่น</div>
 
     <form 
-      action="🔴 ใส่ URL /exec ของคุณตรงนี้ 🔴"
+      action="https://script.google.com/macros/s/AKfycbyu2ektUOwbXEPD5KGE9dkpUR6J0Q2fb422sX4qPaGnKV9U72p2dMsh1UZN_37XCk2t/exec"
       method="POST"
       target="hiddenFrame"
       onsubmit="submitted()"
@@ -50,7 +117,7 @@ button {
         <button type="submit">จอง</button>
     </form>
 
-    <p id="status"></p>
+    <div id="status" class="status"></div>
 </div>
 
 <iframe name="hiddenFrame" style="display:none;"></iframe>
