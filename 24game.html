@@ -1,31 +1,82 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <title>หน้าที่ 2</title>
-    <style>
-        body {
-            background: #0d1117;
-            color: white;
-            font-family: Arial;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
+<meta charset="UTF-8">
+<title>จอง</title>
+<style>
+body {
+    background: #0d1117;
+    color: white;
+    font-family: Arial;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-        a {
-            color: #2ea043;
-            text-decoration: none;
-            margin-top: 20px;
-        }
-    </style>
+.container {
+    background: #161b22;
+    padding: 30px;
+    border-radius: 10px;
+    width: 300px;
+}
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: none;
+}
+
+input {
+    background: #0d1117;
+    color: white;
+    border: 1px solid #30363d;
+}
+
+button {
+    background: #238636;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2ea043;
+}
+</style>
 </head>
 <body>
 
-<h1>ยินดีต้อนรับสู่หน้าที่ 2 🎉</h1>
-<a href="index.html">← กลับหน้าหลัก</a>
+<div class="container">
+    <h2>ฟอร์มจอง</h2>
+
+    <input id="name" placeholder="ชื่อ">
+    <input id="class" placeholder="ชั้น">
+
+    <button onclick="submitForm()">จอง</button>
+
+    <p id="status"></p>
+</div>
+
+<script>
+function submitForm() {
+    const name = document.getElementById("name").value;
+    const className = document.getElementById("class").value;
+
+    fetch("https://script.google.com/macros/s/AKfycbx5ivvrVXFAhB1Lo7eUmQgtyFXldos2g6ePxuI7QmpqQa4QcOwbTxO2DQ_5pT4osowt/exec", {
+        method: "POST",
+        body: JSON.stringify({
+            name: name,
+            class: className
+        })
+    }).then(() => {
+        document.getElementById("status").innerText = "จองสำเร็จ ✅";
+    }).catch(() => {
+        document.getElementById("status").innerText = "เกิดข้อผิดพลาด ❌";
+    });
+}
+</script>
 
 </body>
 </html>
