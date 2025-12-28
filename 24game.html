@@ -1,8 +1,75 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>ฟอร์มจอง</title>
+
+<style>
+body {
+    background: #0d1117;
+    color: white;
+    font-family: Arial;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: #161b22;
+    padding: 30px;
+    border-radius: 10px;
+    width: 320px;
+}
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: none;
+}
+
+input {
+    background: #0d1117;
+    color: white;
+    border: 1px solid #30363d;
+}
+
+button {
+    background: #238636;
+    color: white;
+    cursor: pointer;
+}
+
+button:disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background: #2ea043;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>ฟอร์มจอง</h2>
+
+    <input id="name" placeholder="ชื่อ">
+    <input id="class" placeholder="ชั้น">
+
+    <button onclick="submitForm()">จอง</button>
+
+    <p id="status"></p>
+</div>
+
 <script>
 function submitForm() {
     const name = document.getElementById("name").value.trim();
     const className = document.getElementById("class").value.trim();
-    const game = "24Game";
     const status = document.getElementById("status");
     const btn = document.querySelector("button");
 
@@ -17,21 +84,26 @@ function submitForm() {
     const formData = new URLSearchParams();
     formData.append("name", name);
     formData.append("class", className);
-    formData.append("game", game);
+    formData.append("game", "24Game");
 
     fetch("https://script.google.com/macros/s/AKfycbw-8qEemOHgwAM1FNx2cW-lr_U-aHigDlAIyNr9HpWaxquV20_E7t53rl3eDNGIeL_3/exec", {
         method: "POST",
         body: formData
     })
-    .then(() => {
+    .then(res => res.text())
+    .then(text => {
         status.innerText = "จองสำเร็จ ✅";
         btn.disabled = false;
         document.getElementById("name").value = "";
         document.getElementById("class").value = "";
     })
-    .catch(() => {
+    .catch(err => {
         status.innerText = "เชื่อมต่อไม่ได้ ❌";
         btn.disabled = false;
+        console.error(err);
     });
 }
 </script>
+
+</body>
+</html>
