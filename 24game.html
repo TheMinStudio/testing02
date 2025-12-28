@@ -1,29 +1,39 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-<meta charset="UTF-8">
-<title>หน้าที่ 2</title>
-<style>
-body {
-    background: #0d1117;
-    color: white;
-    font-family: Arial;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-}
-</style>
-</head>
-<body>
-
-<h1>หน้าที่ 2</h1>
-<p>หน้านี้ไม่ขาวแล้ว 🎉</p>
-
 <script>
-console.log("Page loaded");
-</script>
+function submitForm() {
+    const name = document.getElementById("name").value.trim();
+    const className = document.getElementById("class").value.trim();
+    const game = "24Game";
+    const status = document.getElementById("status");
+    const btn = document.querySelector("button");
 
-</body>
-</html>
+    if (!name || !className) {
+        status.innerText = "กรุณากรอกชื่อและชั้นให้ครบ ❗";
+        return;
+    }
+
+    btn.disabled = true;
+    status.innerText = "กำลังส่งข้อมูล...";
+
+    fetch("https://script.google.com/macros/s/AKfycbxhVy3cFZ8SztNFgC-VvC3hATXNtzB2UoAbNM3rVqI4K7-XteeAHZ9rzNQBQKK8ewLk/exec", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: name,
+            class: className,
+            game: game
+        })
+    })
+    .then(() => {
+        status.innerText = "จองสำเร็จ ✅";
+        document.getElementById("name").value = "";
+        document.getElementById("class").value = "";
+        btn.disabled = false;
+    })
+    .catch(() => {
+        status.innerText = "เกิดข้อผิดพลาด ❌";
+        btn.disabled = false;
+    });
+}
+</script>
