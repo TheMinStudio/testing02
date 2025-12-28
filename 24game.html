@@ -2,7 +2,8 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>จองเกม</title>
+<title>จองเกม 24</title>
+
 <style>
 body {
     background: #0d1117;
@@ -20,10 +21,29 @@ body {
     border-radius: 10px;
     width: 300px;
 }
+
 input, button {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
+    border-radius: 6px;
+    border: none;
+}
+
+input {
+    background: #0d1117;
+    color: white;
+    border: 1px solid #30363d;
+}
+
+button {
+    background: #238636;
+    color: white;
+    cursor: pointer;
+}
+
+button:disabled {
+    background: #555;
 }
 </style>
 </head>
@@ -66,12 +86,20 @@ function submitForm() {
             game: game
         })
     })
-    .then(() => {
-        status.innerText = "จองสำเร็จ ✅";
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            status.innerText = "จองสำเร็จ ✅";
+            document.getElementById("name").value = "";
+            document.getElementById("class").value = "";
+        } else {
+            status.innerText = "ผิดพลาดจากเซิร์ฟเวอร์ ❌";
+        }
         btn.disabled = false;
     })
-    .catch(() => {
-        status.innerText = "เกิดข้อผิดพลาด ❌";
+    .catch(err => {
+        console.error(err);
+        status.innerText = "เชื่อมต่อไม่ได้ ❌";
         btn.disabled = false;
     });
 }
