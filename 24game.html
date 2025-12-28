@@ -77,7 +77,7 @@ function submitForm() {
     btn.disabled = true;
     status.innerText = "กำลังส่งข้อมูล...";
 
-    fetch("https://script.google.com/macros/s/AKfycbwKkZb8EJXSe-3iqqcXFM9bCyeNwp8GNS-jBR0ufVKJXctiK_4Z7u3lF4HwQh0i8_wA/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbzmdIO6ANtTBW0nFWxfVVScDKKni9-4FwXJB5-bCcpAkz3rGc0dh8zPBtpFnj9y0MYN/exec", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
