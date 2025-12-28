@@ -1,3 +1,46 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>จองเกม</title>
+<style>
+body {
+    background: #0d1117;
+    color: white;
+    font-family: Arial;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: #161b22;
+    padding: 30px;
+    border-radius: 10px;
+    width: 300px;
+}
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>ฟอร์มจอง</h2>
+
+    <input id="name" placeholder="ชื่อ">
+    <input id="class" placeholder="ชั้น">
+
+    <button onclick="submitForm()">จอง</button>
+
+    <p id="status"></p>
+</div>
+
 <script>
 function submitForm() {
     const name = document.getElementById("name").value.trim();
@@ -16,9 +59,7 @@ function submitForm() {
 
     fetch("https://script.google.com/macros/s/AKfycbxhVy3cFZ8SztNFgC-VvC3hATXNtzB2UoAbNM3rVqI4K7-XteeAHZ9rzNQBQKK8ewLk/exec", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             name: name,
             class: className,
@@ -27,8 +68,6 @@ function submitForm() {
     })
     .then(() => {
         status.innerText = "จองสำเร็จ ✅";
-        document.getElementById("name").value = "";
-        document.getElementById("class").value = "";
         btn.disabled = false;
     })
     .catch(() => {
@@ -37,3 +76,6 @@ function submitForm() {
     });
 }
 </script>
+
+</body>
+</html>
