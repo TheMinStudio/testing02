@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>ฟอร์มจอง</title>
-
 <style>
 body {
     background: #0d1117;
@@ -14,41 +13,21 @@ body {
     align-items: center;
     height: 100vh;
 }
-
 .container {
     background: #161b22;
     padding: 30px;
     border-radius: 10px;
     width: 320px;
 }
-
 input, button {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
-    border-radius: 6px;
-    border: none;
 }
-
-input {
-    background: #0d1117;
-    color: white;
-    border: 1px solid #30363d;
-}
-
 button {
     background: #238636;
     color: white;
-    cursor: pointer;
-}
-
-button:disabled {
-    background: #555;
-    cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-    background: #2ea043;
+    border: none;
 }
 </style>
 </head>
@@ -58,50 +37,27 @@ button:hover:not(:disabled) {
 <div class="container">
     <h2>ฟอร์มจอง</h2>
 
-    <input id="name" placeholder="ชื่อ">
-    <input id="class" placeholder="ชั้น">
+    <form 
+      action="https://script.google.com/macros/s/AKfycby4R8FtQNpJwO8wB3ZHCE3x-WNTNV82DPl83wP4GKmAU4emUd7ze5q-1_vNua_XerpT/exec"
+      method="POST"
+      target="hiddenFrame"
+      onsubmit="submitted()"
+    >
+        <input name="name" placeholder="ชื่อ" required>
+        <input name="class" placeholder="ชั้น" required>
+        <input type="hidden" name="game" value="24Game">
 
-    <button onclick="submitForm()">จอง</button>
+        <button type="submit">จอง</button>
+    </form>
 
     <p id="status"></p>
 </div>
 
+<iframe name="hiddenFrame" style="display:none;"></iframe>
+
 <script>
-function submitForm() {
-    const name = document.getElementById("name").value.trim();
-    const className = document.getElementById("class").value.trim();
-    const status = document.getElementById("status");
-    const btn = document.querySelector("button");
-
-    if (!name || !className) {
-        status.innerText = "กรุณากรอกชื่อและชั้นให้ครบ ❗";
-        return;
-    }
-
-    btn.disabled = true;
-    status.innerText = "กำลังส่งข้อมูล...";
-
-    const formData = new URLSearchParams();
-    formData.append("name", name);
-    formData.append("class", className);
-    formData.append("game", "24Game");
-
-    fetch("https://script.google.com/macros/s/AKfycbw-8qEemOHgwAM1FNx2cW-lr_U-aHigDlAIyNr9HpWaxquV20_E7t53rl3eDNGIeL_3/exec", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.text())
-    .then(text => {
-        status.innerText = "จองสำเร็จ ✅";
-        btn.disabled = false;
-        document.getElementById("name").value = "";
-        document.getElementById("class").value = "";
-    })
-    .catch(err => {
-        status.innerText = "เชื่อมต่อไม่ได้ ❌";
-        btn.disabled = false;
-        console.error(err);
-    });
+function submitted() {
+    document.getElementById("status").innerText = "จองสำเร็จ ✅";
 }
 </script>
 
