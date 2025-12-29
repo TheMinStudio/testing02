@@ -72,7 +72,6 @@ h1 {
     color: #fff;
 }
 
-/* Buttons */
 .btn-avalon { background: #2ea043; }
 .btn-insider { background: #1f6feb; }
 .btn-citadels { background: #ff6b6b; }
@@ -95,6 +94,13 @@ h1 {
 <h1>เลือกเกมที่จะจอง</h1>
 
 <div class="grid">
+
+<!-- AVALON -->
+<div class="card" onclick="go('AVALON game.html')">
+    <h2>AVALON</h2>
+    <p>ทำภารกิจให้สำเร็จและเปิดโปงผู้ทรยศ</p>
+    <button class="btn-avalon" onclick="btn(event,'AVALON game.html')">เริ่มจอง</button>
+</div>
 
 <!-- INSIDER -->
 <div class="card" onclick="go('INSIDER .html')">
@@ -151,7 +157,6 @@ h1 {
     <p>ต่อสู้และสร้างอาณาจักร</p>
     <button class="btn-moth" onclick="btn(event,'แมลงเม่า .html')">เริ่มจอง</button>
 </div>
-
 
 </div>
 </div>
