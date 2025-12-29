@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>WEREWOLF</title>
+<title>AVALON</title>
 <style>
 body {margin:0;height:100vh;background:#0d1117;display:flex;justify-content:center;align-items:center;font-family:Arial;color:white;}
 .card {background:#161b22;padding:30px;border-radius:12px;width:300px;}
@@ -16,7 +16,7 @@ button {background:#2ea043;color:white;font-size:16px;cursor:pointer;}
 <body>
 
 <div class="card">
-  <h2>WEREWOLF</h2>
+  <h2>AVALON</h2>
   <input id="name" placeholder="ชื่อ">
   <input id="class" placeholder="ชั้น/เบอร์ติดต่อ">
   <button onclick="reserve()">จอง</button>
@@ -44,7 +44,7 @@ function reserve() {
 
   fetch(WEB_APP_URL, {
     method: "POST",
-    body: new URLSearchParams({name:userName,className:cls,game:"WEREWOLF"})
+    body: new URLSearchParams({name:userName,className:cls,game:"AVALON"})
   })
   .then(() => {
     intervalId = setInterval(updateQueue, 2000);
@@ -71,7 +71,7 @@ function notifyUser(msg){
 }
 
 function updateQueue(){
-  fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=24Game`)
+  fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=AVALON`)
     .then(r=>r.text())
     .then(q=>{
       q = q.trim();
