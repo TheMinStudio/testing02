@@ -69,9 +69,10 @@ function updateQueue(){
   fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=24Game`)
     .then(r=>r.text())
     .then(q=>{
-      q = q.trim(); // ลบ whitespace
+      q = q.trim();
       const qInt = parseInt(q,10);
       const queueEl = document.getElementById("queue");
+
       if(!q || isNaN(qInt) || qInt===0) queueEl.innerText="…";
       else queueEl.innerText=qInt;
 
@@ -84,35 +85,6 @@ function updateQueue(){
     .catch(err=>{
       console.error(err);
       document.getElementById("queue").innerText="ERR";
-    });
-}
-</script>
-
-</body>
-</html>    });
-  }
-}
-
-function updateQueue() {
-  fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=24Game`)
-    .then(r => r.text())
-    .then(q => {
-      q = q.trim(); // ลบ whitespace
-      const qInt = parseInt(q, 10);
-      const queueEl = document.getElementById("queue");
-
-      if (!q || isNaN(qInt) || qInt === 0) queueEl.innerText = "…";
-      else queueEl.innerText = qInt;
-
-      if (qInt === 1) {
-        document.getElementById("alertSound").play();
-        notifyUser("ถึงคิวคุณแล้ว!");
-        clearInterval(intervalId);
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById("queue").innerText = "ERR";
     });
 }
 </script>
