@@ -12,7 +12,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     color: #e6edf3;
 }
 
@@ -24,84 +24,44 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-h2 {
-    text-align: center;
-}
-
-.subtitle {
-    text-align: center;
-    color: #58a6ff;
-    font-size: 14px;
-    margin-bottom: 25px;
-}
-
-input {
+input, button {
     width: 100%;
     padding: 12px;
     margin-top: 12px;
-    background: #0d1117;
-    color: #f0f6fc;
-    border: 1px solid #30363d;
     border-radius: 8px;
+    border: none;
 }
 
 button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 18px;
-    background: linear-gradient(135deg, #238636, #2ea043);
+    background: #2ea043;
     color: white;
     font-size: 16px;
-    border: none;
-    border-radius: 10px;
     cursor: pointer;
 }
 
-.status {
-    text-align: center;
-    margin-top: 15px;
-    font-size: 14px;
-    color: #2ea043;
-}
-
-/* LOADING */
 .loading {
     position: fixed;
     inset: 0;
-    background: rgba(13,17,23,0.85);
-    display: flex;
+    background: rgba(13,17,23,0.9);
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 10;
 }
 
 .loading.show {
-    opacity: 1;
-    pointer-events: all;
+    display: flex;
 }
 
 .loading-number {
-    font-size: 64px;
-    font-weight: bold;
+    font-size: 72px;
     color: #58a6ff;
-    margin-bottom: 20px;
+    font-weight: bold;
 }
 
-.spinner {
-    width: 48px;
-    height: 48px;
-    border: 5px solid rgba(255,255,255,0.2);
-    border-top: 5px solid #58a6ff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.loading-text {
+    margin-top: 10px;
+    color: #8b949e;
 }
 </style>
 </head>
@@ -110,61 +70,51 @@ button {
 
 <div class="card">
     <h2>จองเกม 24</h2>
-    <div class="subtitle">กรอกข้อมูลเพื่อจองการเล่น</div>
-
-    <input id="name" placeholder="ชื่อ" required>
-    <input id="class" placeholder="ชั้น" required>
-
-    <button onclick="submitForm()">จอง</button>
-    <div id="status" class="status"></div>
+    <input id="name" placeholder="ชื่อ">
+    <input id="class" placeholder="ชั้น">
+    <button onclick="reserve()">จอง</button>
 </div>
 
 <div id="loading" class="loading">
-    <div id="loadingNumber" class="loading-number">⏳</div>
-    <div class="spinner"></div>
+    <div id="queue" class="loading-number">⏳</div>
+    <div class="loading-text">กำลังรอคิว...</div>
 </div>
 
 <script>
-const WEB_APP_URL =
+const WEB_APP =
 "https://script.google.com/macros/s/AKfycbyu2ektUOwbXEPD5KGE9dkpUR6J0Q2fb422sX4qPaGnKV9U72p2dMsh1UZN_37XCk2t/exec";
 
-function submitForm() {
-    const name = document.getElementById("name").value.trim();
-    const className = document.getElementById("class").value.trim();
+let userName = "";
+let timer = null;
 
-    if (!name || !className) return;
+function reserve() {
+    userName = document.getElementById("name").value.trim();
+    const cls = document.getElementById("class").value.trim();
+    if (!userName || !cls) return;
 
     document.getElementById("loading").classList.add("show");
-    document.getElementById("loadingNumber").innerText = "⏳";
-    document.getElementById("status").innerText = "กำลังจองคิว...";
 
-    fetch(WEB_APP_URL, {
+    // จองคิว
+    fetch(WEB_APP, {
         method: "POST",
         body: new URLSearchParams({
-            name: name,
-            class: className,
+            action: "reserve",
+            name: userName,
+            class: cls,
             game: "24Game"
         })
-    })
-    .then(res => res.text())
-    .then(txt => {
-        if (txt.startsWith("QUEUE|")) {
-            const q = txt.split("|")[1];
-            document.getElementById("loadingNumber").innerText = q;
-            document.getElementById("status").innerText =
-                "จองสำเร็จ 🎉 คุณอยู่คิวที่ " + q;
-        } else {
-            document.getElementById("status").innerText = txt;
-        }
-
-        setTimeout(() => {
-            document.getElementById("loading").classList.remove("show");
-        }, 1500);
-    })
-    .catch(() => {
-        document.getElementById("status").innerText = "เกิดข้อผิดพลาด";
-        document.getElementById("loading").classList.remove("show");
     });
+
+    // เริ่มถามคิวทุก 2 วิ
+    timer = setInterval(updateQueue, 2000);
+}
+
+function updateQueue() {
+    fetch(WEB_APP + "?action=check&name=" + encodeURIComponent(userName) + "&game=24Game")
+        .then(r => r.text())
+        .then(q => {
+            document.getElementById("queue").innerText = q;
+        });
 }
 </script>
 
