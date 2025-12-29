@@ -30,7 +30,7 @@ button {background:#2ea043;color:white;font-size:16px;cursor:pointer;}
 <audio id="alertSound" src="https://www.myinstants.com/media/sounds/bell.mp3"></audio>
 
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwYs6_VhY8HTGjv1NAqovVNLMEmMDd0zeJNewbzJ6JW1Hg-SOv9AjPlIOzwhXI1Ryxd/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyTnF-lhnXE757pYyZxCSilQOddR54qqMVxMYuFg0CMOeQ58L-Bkc0BF7Eo9cD_hBW-/exec";
 let userName = "";
 let intervalId = null;
 
@@ -57,11 +57,16 @@ function reserve() {
 }
 
 function notifyUser(msg){
-  if(Notification.permission==="granted") new Notification(msg);
-  else if(Notification.permission!=="denied"){
-    Notification.requestPermission().then(p=>{
-      if(p==="granted") new Notification(msg);
-    });
+  try {
+    if(Notification.permission==="granted") {
+      new Notification(msg);
+    } else if(Notification.permission!=="denied") {
+      Notification.requestPermission().then(p=>{
+        if(p==="granted") new Notification(msg);
+      });
+    }
+  } catch(e) {
+    console.warn("Notification failed:", e);
   }
 }
 
@@ -73,12 +78,17 @@ function updateQueue(){
       const qInt = parseInt(q,10);
       const queueEl = document.getElementById("queue");
 
-      if(!q || isNaN(qInt) || qInt===0) queueEl.innerText="ถึงคิวของคุณแล้ว😀";
-      else queueEl.innerText=qInt;
-
-      if(qInt===1){
+      if(isNaN(qInt) || qInt === 0){
+        queueEl.innerText = "…";
+      } else if(qInt === 1){
+        queueEl.innerText = "ถึงคิวของคุณแล้ว 😀";
         document.getElementById("alertSound").play();
+        notifyUser("ถึงคิวคุณแล้ว!");
+        clearInterval(intervalId);
+      } else {
+        queueEl.innerText = qInt;
       }
+
     })
     .catch(err=>{
       console.error(err);
