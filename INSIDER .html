@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>INSIDER</title>
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #0d1117, #161b22);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+.card {
+    background: #161b22;
+    padding: 30px;
+    border-radius: 12px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    background: #2ea043;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #28a239;
+}
+
+.loading {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #58a6ff;
+    font-family: Arial, sans-serif;
+}
+
+.loading.show {
+    display: flex;
+}
+
+.queue {
+    font-size: 96px;
+    margin-top: 10px;
+    transition: transform 0.3s;
+}
+.queue.highlight {
+    transform: scale(1.3);
+    color: #ffea00;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2 id="gameTitle"></h2>
+    <input id="name" placeholder="ชื่อ">
+    <input id="class" placeholder="ชั้น/เบอร์ติดต่อ">
+    <button onclick="reserve()">จอง</button>
+</div>
+
+<div id="loading" class="loading">
+    <div>เหลืออีก</div>
+    <div id="queue" class="queue">⏳</div>
+</div>
+
+<audio id="alertSound" src="https://www.myinstants.com/media/sounds/bell.mp3"></audio>
+
+<script>
+let mygame = "INSIDER";
+document.getElementById("gameTitle").innerText = mygame;
+
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyTnF-lhnXE757pYyZxCSilQOddR54qqMVxMYuFg0CMOeQ58L-Bkc0BF7Eo9cD_hBW-/exec";
+let userName = "";
+let intervalId = null;
+
+function reserve() {
+    userName = document.getElementById("name").value.trim();
+    const cls = document.getElementById("class").value.trim();
+    if (!userName || !cls) return alert("กรุณากรอกชื่อและชั้น/เบอร์ติดต่อ");
+
+    document.getElementById("loading").classList.add("show");
+    document.getElementById("queue").innerText = "⏳";
+
+    fetch(WEB_APP_URL, {
+        method: "POST",
+        body: new URLSearchParams({name: userName, className: cls, game: `${mygame}`})
+    })
+    .then(() => {
+        intervalId = setInterval(updateQueue, 2000);
+        updateQueue();
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById("queue").innerText = "ERR";
+    });
+}
+
+function notifyUser(msg) {
+    try {
+        if(Notification.permission === "granted") {
+            new Notification(msg);
+        } else if(Notification.permission !== "denied") {
+            Notification.requestPermission().then(p => {
+                if(p === "granted") new Notification(msg);
+            });
+        }
+    } catch(e) {
+        console.warn("Notification failed:", e);
+    }
+}
+
+function updateQueue() {
+    fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=${mygame}`)
+    .then(r => r.text())
+    .then(q => {
+        q = q.trim();
+        const qInt = parseInt(q, 10);
+        const queueEl = document.getElementById("queue");
+
+        if(isNaN(qInt) || qInt === 0){
+            queueEl.innerText = "ถึงคิวของคุณแล้ว 😀";
+            queueEl.classList.add("highlight");
+            document.getElementById("alertSound").play();
+            notifyUser("ถึงคิวคุณแล้ว!");
+            clearInterval(intervalId);
+        } else {
+            queueEl.innerText = qInt;
+            queueEl.classList.remove("highlight");
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById("queue").innerText = "ERR";
+    });
+}
+</script>
+
+</body>
+</html>
