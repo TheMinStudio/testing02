@@ -6,62 +6,54 @@
 
 <style>
 body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(135deg, #0d1117, #161b22);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial;
-    color: #e6edf3;
+  margin: 0;
+  height: 100vh;
+  background: #0d1117;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial;
+  color: white;
 }
 
 .card {
-    background: #161b22;
-    padding: 35px;
-    border-radius: 14px;
-    width: 340px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  background: #161b22;
+  padding: 30px;
+  border-radius: 12px;
+  width: 300px;
 }
 
 input, button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 12px;
-    border-radius: 8px;
-    border: none;
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 8px;
+  border: none;
 }
 
 button {
-    background: #2ea043;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
+  background: #2ea043;
+  color: white;
+  font-size: 16px;
 }
 
 .loading {
-    position: fixed;
-    inset: 0;
-    background: rgba(13,17,23,0.9);
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .loading.show {
-    display: flex;
+  display: flex;
 }
 
-.loading-number {
-    font-size: 72px;
-    color: #58a6ff;
-    font-weight: bold;
-}
-
-.loading-text {
-    margin-top: 10px;
-    color: #8b949e;
+.queue {
+  font-size: 64px;
+  color: #58a6ff;
 }
 </style>
 </head>
@@ -69,52 +61,48 @@ button {
 <body>
 
 <div class="card">
-    <h2>จองเกม 24</h2>
-    <input id="name" placeholder="ชื่อ">
-    <input id="class" placeholder="ชั้น">
-    <button onclick="reserve()">จอง</button>
+  <h2>จองเกม 24</h2>
+  <input id="name" placeholder="ชื่อ">
+  <input id="class" placeholder="ชั้น">
+  <button onclick="reserve()">จอง</button>
 </div>
 
 <div id="loading" class="loading">
-    <div id="queue" class="loading-number">⏳</div>
-    <div class="loading-text">กำลังรอคิว...</div>
+  <div>ตอนนี้คิวที่</div>
+  <div id="queue" class="queue">⏳</div>
 </div>
 
 <script>
-const WEB_APP =
-"https://script.google.com/macros/s/AKfycbyu2ektUOwbXEPD5KGE9dkpUR6J0Q2fb422sX4qPaGnKV9U72p2dMsh1UZN_37XCk2t/exec";
+const WEB_APP_URL =
+"https://script.google.com/macros/s/AKfycbwiWGgfBua-tYUnh7vEWaEVxaqoT8j18szeP-A--qA9EL2L6dVAjwefuSAh4JPWI841/exec";
 
 let userName = "";
-let timer = null;
 
 function reserve() {
-    userName = document.getElementById("name").value.trim();
-    const cls = document.getElementById("class").value.trim();
-    if (!userName || !cls) return;
+  userName = document.getElementById("name").value;
+  const cls = document.getElementById("class").value;
+  if (!userName || !cls) return;
 
-    document.getElementById("loading").classList.add("show");
+  document.getElementById("loading").classList.add("show");
 
-    // จองคิว
-    fetch(WEB_APP, {
-        method: "POST",
-        body: new URLSearchParams({
-            action: "reserve",
-            name: userName,
-            class: cls,
-            game: "24Game"
-        })
-    });
+  fetch(WEB_APP_URL, {
+    method: "POST",
+    body: new URLSearchParams({
+      name: userName,
+      class: cls,
+      game: "24Game"
+    })
+  });
 
-    // เริ่มถามคิวทุก 2 วิ
-    timer = setInterval(updateQueue, 2000);
+  setInterval(updateQueue, 2000);
 }
 
 function updateQueue() {
-    fetch(WEB_APP + "?action=check&name=" + encodeURIComponent(userName) + "&game=24Game")
-        .then(r => r.text())
-        .then(q => {
-            document.getElementById("queue").innerText = q;
-        });
+  fetch(WEB_APP_URL + "?name=" + encodeURIComponent(userName) + "&game=24Game")
+    .then(r => r.text())
+    .then(q => {
+      document.getElementById("queue").innerText = q;
+    });
 }
 </script>
 
