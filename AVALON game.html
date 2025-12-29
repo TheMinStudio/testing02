@@ -3,98 +3,189 @@
 <head>
 <meta charset="UTF-8">
 <title>AVALON</title>
+
 <style>
-body {margin:0;height:100vh;background:#0d1117;display:flex;justify-content:center;align-items:center;font-family:Arial;color:white;}
-.card {background:#161b22;padding:30px;border-radius:12px;width:300px;}
-input,button {width:100%;padding:12px;margin-top:12px;border-radius:8px;border:none;}
-button {background:#2ea043;color:white;font-size:16px;cursor:pointer;}
-.loading {position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;flex-direction:column;justify-content:center;align-items:center;}
-.loading.show {display:flex;}
-.queue {font-size:64px;color:#58a6ff;margin-top:10px;}
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #0d1117, #161b22);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+.card {
+    background: #161b22;
+    padding: 30px;
+    border-radius: 12px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    background: #2ea043;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #28a239;
+}
+
+.loading {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #58a6ff;
+}
+
+.loading.show {
+    display: flex;
+}
+
+.queue {
+    font-size: 48px;
+    margin-top: 10px;
+    transition: transform 0.3s;
+}
+
+.queue.highlight {
+    transform: scale(1.2);
+    color: #ffea00;
+}
+
+/* spinner มุมขวาล่าง */
+.spinner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top: 4px solid #58a6ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: none;
+    z-index: 9999;
+}
+
+.spinner.show {
+    display: block;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 </style>
 </head>
-<body>
 
+<body>
 <div class="card">
-  <h2>AVALON</h2>
-  <input id="name" placeholder="ชื่อ">
-  <input id="class" placeholder="ชั้น/เบอร์ติดต่อ">
-  <button onclick="reserve()">จอง</button>
+    <h2 id="gameTitle"></h2>
+    <input id="name" placeholder="ชื่อ">
+    <input id="class" placeholder="ชั้น/เบอร์ติดต่อ">
+    <button onclick="reserve()">จอง</button>
 </div>
 
 <div id="loading" class="loading">
-  <div>เหลืออีก</div>
-  <div id="queue" class="queue">⏳</div>
+    <div>เหลืออีก</div>
+    <div id="queue" class="queue">กำลังตรวจสอบ…</div>
 </div>
+
+<!-- spinner ต้องอยู่นอก style -->
+<div id="spinner" class="spinner"></div>
 
 <audio id="alertSound" src="https://www.myinstants.com/media/sounds/bell.mp3"></audio>
 
 <script>
+let mygame = "AVALON";
+document.getElementById("gameTitle").innerText = mygame;
+
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyTnF-lhnXE757pYyZxCSilQOddR54qqMVxMYuFg0CMOeQ58L-Bkc0BF7Eo9cD_hBW-/exec";
 let userName = "";
 let intervalId = null;
 
 function reserve() {
-  userName = document.getElementById("name").value.trim();
-  const cls = document.getElementById("class").value.trim();
-  if (!userName || !cls) return alert("กรุณากรอกชื่อและชั้น/เบอร์ติดต่อ");
+    userName = document.getElementById("name").value.trim();
+    const cls = document.getElementById("class").value.trim();
 
-  document.getElementById("loading").classList.add("show");
-  document.getElementById("queue").innerText = "⏳";
-
-  fetch(WEB_APP_URL, {
-    method: "POST",
-    body: new URLSearchParams({name:userName,className:cls,game:"AVALON"})
-  })
-  .then(() => {
-    intervalId = setInterval(updateQueue, 2000);
-    updateQueue();
-  })
-  .catch(err=>{
-    console.error(err);
-    document.getElementById("queue").innerText="ERR";
-  });
-}
-
-function notifyUser(msg){
-  try {
-    if(Notification.permission==="granted") {
-      new Notification(msg);
-    } else if(Notification.permission!=="denied") {
-      Notification.requestPermission().then(p=>{
-        if(p==="granted") new Notification(msg);
-      });
+    if (!userName || !cls) {
+        alert("กรุณากรอกชื่อและชั้น/เบอร์ติดต่อ");
+        return;
     }
-  } catch(e) {
-    console.warn("Notification failed:", e);
-  }
+
+    document.getElementById("loading").classList.add("show");
+    document.getElementById("spinner").classList.add("show");
+    document.getElementById("queue").innerText = "กำลังโหลด…";
+
+    fetch(WEB_APP_URL, {
+        method: "POST",
+        body: new URLSearchParams({
+            name: userName,
+            className: cls,
+            game: mygame
+        })
+    })
+    .then(() => {
+        intervalId = setInterval(updateQueue, 2000);
+        updateQueue();
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById("queue").innerText = "เกิดข้อผิดพลาด";
+        document.getElementById("spinner").classList.remove("show");
+    });
 }
 
-function updateQueue(){
-  fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=AVALON`)
-    .then(r=>r.text())
-    .then(q=>{
-      q = q.trim();
-      const qInt = parseInt(q,10);
-      const queueEl = document.getElementById("queue");
+function notifyUser(msg) {
+    if (Notification.permission === "granted") {
+        new Notification(msg);
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(p => {
+            if (p === "granted") new Notification(msg);
+        });
+    }
+}
 
-      if(isNaN(qInt) || qInt === 0){
-        queueEl.innerText = "ถึงคิวของคุณแล้ว 😀";
-        document.getElementById("alertSound").play();
-        notifyUser("ถึงคิวคุณแล้ว!");
-        clearInterval(intervalId);
-        // queueEl.innerText = "…";
-      } else if(qInt === 1){
-        queueEl.innerText = qInt;
-        
-      } else {
-        queueEl.innerText = qInt;
-      }
+function updateQueue() {
+    fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=${mygame}`)
+    .then(r => r.text())
+    .then(q => {
+        const qInt = parseInt(q.trim(), 10);
+        const queueEl = document.getElementById("queue");
 
+        if (isNaN(qInt) || qInt === 0) {
+            queueEl.innerText = "ถึงคิวของคุณแล้ว 😀";
+            queueEl.classList.add("highlight");
+            document.getElementById("alertSound").play();
+            notifyUser("ถึงคิวคุณแล้ว!");
+            document.getElementById("spinner").classList.remove("show");
+            clearInterval(intervalId);
+        } else {
+            queueEl.innerText = qInt;
+            queueEl.classList.remove("highlight");
+        }
     })
-    .catch(err=>{
-      console.error(err);
-      document.getElementById("queue").innerText="ERR";
+    .catch(err => {
+        console.error(err);
+        document.getElementById("queue").innerText = "ERR";
     });
 }
 </script>
