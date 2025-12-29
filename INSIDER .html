@@ -97,7 +97,6 @@ button:hover {
 </head>
 
 <body>
-
 <div class="card">
     <h2 id="gameTitle"></h2>
     <input id="name" placeholder="ชื่อ">
@@ -110,13 +109,12 @@ button:hover {
     <div id="queue" class="queue">กำลังตรวจสอบ…</div>
 </div>
 
-<!-- spinner ต้องอยู่นอก style -->
 <div id="spinner" class="spinner"></div>
 
 <audio id="alertSound" src="https://www.myinstants.com/media/sounds/bell.mp3"></audio>
 
 <script>
-let mygame = "INSIDER";
+let mygame = "INSIDER"; //ตัวแปรตรงนี้-------------------
 document.getElementById("gameTitle").innerText = mygame;
 
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyTnF-lhnXE757pYyZxCSilQOddR54qqMVxMYuFg0CMOeQ58L-Bkc0BF7Eo9cD_hBW-/exec";
@@ -169,19 +167,21 @@ function updateQueue() {
     fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=${mygame}`)
     .then(r => r.text())
     .then(q => {
-        const qInt = parseInt(q.trim(), 10);
+        const qInt = Number(q.trim());
         const queueEl = document.getElementById("queue");
 
-        if (isNaN(qInt) || qInt === 0) {
+        if (!isNaN(qInt) && qInt === 0) {
             queueEl.innerText = "ถึงคิวของคุณแล้ว 😀";
             queueEl.classList.add("highlight");
             document.getElementById("alertSound").play();
-            notifyUser("ถึงคิวคุณแล้ว!");
+            //notifyUser("ถึงคิวคุณแล้ว!");
             document.getElementById("spinner").classList.remove("show");
-            clearInterval(intervalId);
-        } else {
+            //notifyUser(intervalId);
+        } else if (!isNaN(qInt)) {
             queueEl.innerText = qInt;
             queueEl.classList.remove("highlight");
+        } else {
+            queueEl.innerText = "ERR";
         }
     })
     .catch(err => {
