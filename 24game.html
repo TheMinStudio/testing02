@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>จองเกม 24</title>
-
 <style>
 body {
   margin: 0;
@@ -15,14 +14,12 @@ body {
   font-family: Arial;
   color: white;
 }
-
 .card {
   background: #161b22;
   padding: 30px;
   border-radius: 12px;
   width: 300px;
 }
-
 input, button {
   width: 100%;
   padding: 12px;
@@ -30,14 +27,12 @@ input, button {
   border-radius: 8px;
   border: none;
 }
-
 button {
   background: #2ea043;
   color: white;
   font-size: 16px;
   cursor: pointer;
 }
-
 .loading {
   position: fixed;
   inset: 0;
@@ -47,24 +42,21 @@ button {
   justify-content: center;
   align-items: center;
 }
-
 .loading.show {
   display: flex;
 }
-
 .queue {
   font-size: 64px;
   color: #58a6ff;
 }
 </style>
 </head>
-
 <body>
 
 <div class="card">
   <h2>จองเกม 24</h2>
   <input id="name" placeholder="ชื่อ">
-  <input id="class" placeholder="เบอร์ติดต่อ">
+  <input id="class" placeholder="ชั้น">
   <button onclick="reserve()">จอง</button>
 </div>
 
@@ -73,10 +65,10 @@ button {
   <div id="queue" class="queue">⏳</div>
 </div>
 
-<script>
-const WEB_APP_URL =
-"https://script.google.com/macros/s/AKfycbyjjJldSsfDLDUEpKtdb40EeWjS81ZbH_GF-ASTLZORJm3bmIoWmrAlh-YaytVpyxrD/exec";
+<audio id="alertSound" src="https://www.myinstants.com/media/sounds/bell.mp3"></audio>
 
+<script>
+const WEB_APP_URL = "ใส่_URL_WEB_APP_ของคุณตรงนี้";
 let userName = "";
 let intervalId = null;
 
@@ -102,21 +94,38 @@ function reserve() {
   });
 }
 
+function notifyUser(msg) {
+  if (Notification.permission === "granted") {
+    new Notification(msg);
+  } else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") new Notification(msg);
+    });
+  }
+}
+
 function updateQueue() {
-  fetch(
-    WEB_APP_URL +
-    "?name=" + encodeURIComponent(userName) +
-    "&game=24Game"
-  )
-  .then(r => r.text())
-  .then(q => {
-    console.log("QUEUE FROM SERVER =", q);
-    document.getElementById("queue").innerText = q;
-  })
-  .catch(err => {
-    console.error(err);
-    document.getElementById("queue").innerText = "ERR";
-  });
+  fetch(WEB_APP_URL + "?name=" + encodeURIComponent(userName) + "&game=24Game")
+    .then(r => r.text())
+    .then(q => {
+      const qInt = parseInt(q);
+      const queueEl = document.getElementById("queue");
+      if (isNaN(qInt) || qInt === 0) {
+        queueEl.innerText = "…";
+      } else {
+        queueEl.innerText = qInt;
+      }
+
+      if (qInt === 1) {
+        document.getElementById("alertSound").play();
+        notifyUser("ถึงคิวคุณแล้ว!");
+        clearInterval(intervalId);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("queue").innerText = "ERR";
+    });
 }
 </script>
 
