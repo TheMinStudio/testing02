@@ -27,7 +27,7 @@ button {background:#2ea043;color:white;font-size:16px;cursor:pointer;}
   <div id="queue" class="queue">⏳</div>
 </div>
 
-<audio id="alertSound" src="file:///C:/Users/amree/Dropbox/My%20PC%20(LAPTOP-LVKVPS7P)/Downloads/%E0%B9%81%E0%B8%88%E0%B8%81%E0%B9%80%E0%B8%AA%E0%B8%A2%E0%B8%87%E0%B8%81%E0%B8%A3%E0%B8%94%20thexesitz.mp3"></audio>
+<audio id="alertSound" src="https://www.myinstants.com/media/sounds/bell.mp3"></audio>
 
 <script>
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyTnF-lhnXE757pYyZxCSilQOddR54qqMVxMYuFg0CMOeQ58L-Bkc0BF7Eo9cD_hBW-/exec";
@@ -79,12 +79,14 @@ function updateQueue(){
       const queueEl = document.getElementById("queue");
 
       if(isNaN(qInt) || qInt === 0){
-        queueEl.innerText = "…";
-      } else if(qInt === 1){
         queueEl.innerText = "ถึงคิวของคุณแล้ว 😀";
         document.getElementById("alertSound").play();
         notifyUser("ถึงคิวคุณแล้ว!");
         clearInterval(intervalId);
+        // queueEl.innerText = "…";
+      } else if(qInt === 1){
+        queueEl.innerText = qInt;
+        
       } else {
         queueEl.innerText = qInt;
       }
