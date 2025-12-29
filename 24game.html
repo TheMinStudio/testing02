@@ -16,26 +16,16 @@ body {
     color: #e6edf3;
 }
 
-/* CARD */
 .card {
     background: #161b22;
     padding: 35px;
     border-radius: 14px;
     width: 340px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    animation: fadeIn 0.6s ease;
-    position: relative;
-    z-index: 2;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
 }
 
 h2 {
     text-align: center;
-    margin-bottom: 10px;
 }
 
 .subtitle {
@@ -45,7 +35,6 @@ h2 {
     margin-bottom: 25px;
 }
 
-/* INPUT */
 input {
     width: 100%;
     padding: 12px;
@@ -54,15 +43,8 @@ input {
     color: #f0f6fc;
     border: 1px solid #30363d;
     border-radius: 8px;
-    font-size: 14px;
 }
 
-input:focus {
-    outline: none;
-    border-color: #58a6ff;
-}
-
-/* BUTTON */
 button {
     width: 100%;
     padding: 12px;
@@ -75,11 +57,6 @@ button {
     cursor: pointer;
 }
 
-button:disabled {
-    background: #444;
-}
-
-/* STATUS */
 .status {
     text-align: center;
     margin-top: 15px;
@@ -87,7 +64,7 @@ button:disabled {
     color: #2ea043;
 }
 
-/* LOADING OVERLAY */
+/* LOADING */
 .loading {
     position: fixed;
     inset: 0;
@@ -107,7 +84,6 @@ button:disabled {
     pointer-events: all;
 }
 
-/* BIG NUMBER */
 .loading-number {
     font-size: 64px;
     font-weight: bold;
@@ -115,7 +91,6 @@ button:disabled {
     margin-bottom: 20px;
 }
 
-/* SPINNER */
 .spinner {
     width: 48px;
     height: 48px;
@@ -137,34 +112,59 @@ button:disabled {
     <h2>จองเกม 24</h2>
     <div class="subtitle">กรอกข้อมูลเพื่อจองการเล่น</div>
 
-    <form
-      action="https://script.google.com/macros/s/AKfycbyu2ektUOwbXEPD5KGE9dkpUR6J0Q2fb422sX4qPaGnKV9U72p2dMsh1UZN_37XCk2t/exec"
-      method="POST"
-      target="hiddenFrame"
-      onsubmit="submitted()"
-    >
-        <input name="name" placeholder="ชื่อ" required>
-        <input name="class" placeholder="ชั้น" required>
-        <input type="hidden" name="game" value="24Game">
+    <input id="name" placeholder="ชื่อ" required>
+    <input id="class" placeholder="ชั้น" required>
 
-        <button id="submitBtn" type="submit">จอง</button>
-    </form>
-
+    <button onclick="submitForm()">จอง</button>
     <div id="status" class="status"></div>
 </div>
 
-<!-- LOADING -->
 <div id="loading" class="loading">
     <div id="loadingNumber" class="loading-number">⏳</div>
     <div class="spinner"></div>
 </div>
 
-<iframe name="hiddenFrame" style="display:none;"></iframe>
-
 <script>
-function submitted() {
+const WEB_APP_URL =
+"https://script.google.com/macros/s/AKfycbyu2ektUOwbXEPD5KGE9dkpUR6J0Q2fb422sX4qPaGnKV9U72p2dMsh1UZN_37XCk2t/exec";
+
+function submitForm() {
+    const name = document.getElementById("name").value.trim();
+    const className = document.getElementById("class").value.trim();
+
+    if (!name || !className) return;
+
     document.getElementById("loading").classList.add("show");
+    document.getElementById("loadingNumber").innerText = "⏳";
     document.getElementById("status").innerText = "กำลังจองคิว...";
+
+    fetch(WEB_APP_URL, {
+        method: "POST",
+        body: new URLSearchParams({
+            name: name,
+            class: className,
+            game: "24Game"
+        })
+    })
+    .then(res => res.text())
+    .then(txt => {
+        if (txt.startsWith("QUEUE|")) {
+            const q = txt.split("|")[1];
+            document.getElementById("loadingNumber").innerText = q;
+            document.getElementById("status").innerText =
+                "จองสำเร็จ 🎉 คุณอยู่คิวที่ " + q;
+        } else {
+            document.getElementById("status").innerText = txt;
+        }
+
+        setTimeout(() => {
+            document.getElementById("loading").classList.remove("show");
+        }, 1500);
+    })
+    .catch(() => {
+        document.getElementById("status").innerText = "เกิดข้อผิดพลาด";
+        document.getElementById("loading").classList.remove("show");
+    });
 }
 </script>
 
