@@ -159,15 +159,44 @@ button:disabled {
 <iframe name="hiddenFrame" style="display:none;"></iframe>
 
 <script>
-function submitted() {
-    document.getElementById("loading").classList.add("show");
-    document.getElementById("submitBtn").disabled = true;
+const WEB_APP_URL = "ใส่_WEB_APP_URL_ตรงนี้";
 
-    setTimeout(() => {
-        document.getElementById("loading").classList.remove("show");
-        document.getElementById("status").innerText = "จองสำเร็จ";
-        document.getElementById("submitBtn").disabled = false;
-    }, 1500); // เวลาโหลด
+function submitForm() {
+  const name = document.getElementById("name").value;
+  const className = document.getElementById("class").value;
+
+  if (!name || !className) return;
+
+  document.getElementById("loading").classList.add("show");
+  document.getElementById("submitBtn").disabled = true;
+  document.getElementById("status").innerText = "กำลังจองคิว...";
+
+  fetch(WEB_APP_URL, {
+    method: "POST",
+    body: new URLSearchParams({
+      name: name,
+      class: className,
+      game: "24Game"
+    })
+  })
+  .then(res => res.text())
+  .then(txt => {
+    if (txt.startsWith("QUEUE|")) {
+      const q = txt.split("|")[1];
+      document.getElementById("status").innerText =
+        "จองสำเร็จ 🎉 คุณอยู่คิวที่ " + q;
+    } else {
+      document.getElementById("status").innerText = txt;
+    }
+
+    document.getElementById("loading").classList.remove("show");
+    document.getElementById("submitBtn").disabled = false;
+  })
+  .catch(() => {
+    document.getElementById("status").innerText = "เกิดข้อผิดพลาด";
+    document.getElementById("loading").classList.remove("show");
+    document.getElementById("submitBtn").disabled = false;
+  });
 }
 </script>
 
