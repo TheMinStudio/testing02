@@ -175,7 +175,7 @@ function updateQueue() {
             queueEl.classList.add("highlight");
             document.getElementById("alertSound").play();
             notifyUser("ถึงคิวคุณแล้ว!");
-            document.getElementById("spinner").classList.remove("show");
+            //document.getElementById("spinner").classList.remove("show");
             clearInterval(intervalId);
         } else if (!isNaN(qInt)) {
             queueEl.innerText = qInt;
