@@ -16,25 +16,29 @@ body {
     color: #f0f6fc;
 }
 
-/* กล่องรวม */
 .container {
     text-align: center;
 }
 
-/* หัวข้อ */
 h1 {
     font-size: 46px;
     margin-bottom: 40px;
 }
 
-/* Grid ช่องเกม */
+/* Grid */
 .grid {
     display: grid;
     grid-template-columns: repeat(2, 260px);
     gap: 30px;
 }
 
-/* การ์ด */
+/* Mobile */
+@media (max-width: 600px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .card {
     background: #161b22;
     border-radius: 16px;
@@ -51,13 +55,11 @@ h1 {
     box-shadow: 0 18px 35px rgba(0,0,0,0.6);
 }
 
-/* ชื่อเกม */
 .card h2 {
     margin: 0;
     font-size: 28px;
 }
 
-/* คำอธิบาย */
 .card p {
     margin: 12px 0 22px;
     font-size: 14px;
@@ -65,7 +67,6 @@ h1 {
     line-height: 1.6;
 }
 
-/* ปุ่มในช่อง */
 .card button {
     padding: 10px 22px;
     border-radius: 8px;
@@ -75,22 +76,12 @@ h1 {
     color: #fff;
 }
 
-/* ปุ่มเฉพาะเกม */
-.btn-24 {
-    background: #2ea043;
-}
+/* ปุ่ม */
+.btn-24 { background: #2ea043; }
+.btn-24:hover { background: #3fb950; }
 
-.btn-24:hover {
-    background: #3fb950;
-}
-
-.btn-rubik {
-    background: #1f6feb;
-}
-
-.btn-rubik:hover {
-    background: #388bfd;
-}
+.btn-rubik { background: #1f6feb; }
+.btn-rubik:hover { background: #388bfd; }
 
 /* Ripple */
 .ripple {
@@ -117,24 +108,22 @@ h1 {
     <h1>เลือกเกม</h1>
 
     <div class="grid">
-        <!-- ช่องเกม 24 -->
         <div class="card" onclick="goNextPage(event, '24game.html')">
             <h2>24 GAME</h2>
             <p>
                 นำเลข 4 ตัวมาบวก ลบ คูณ หาร<br>
                 ให้ได้ผลลัพธ์เท่ากับ 24
             </p>
-            <button class="btn-24">เริ่มเล่น</button>
+            <button class="btn-24" onclick="event.stopPropagation()">เริ่มเล่น</button>
         </div>
 
-        <!-- ช่องรูบิค -->
         <div class="card" onclick="goNextPage(event, 'rubik.html')">
             <h2>เกมรูบิค</h2>
             <p>
                 เกมปริศนา 3D<br>
                 ฝึกการคิดเป็นขั้นตอน
             </p>
-            <button class="btn-rubik">เริ่มเล่น</button>
+            <button class="btn-rubik" onclick="event.stopPropagation()">เริ่มเล่น</button>
         </div>
     </div>
 </div>
@@ -142,140 +131,25 @@ h1 {
 <script>
 function goNextPage(e, url) {
     const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
 
     const circle = document.createElement("span");
     const diameter = Math.max(card.clientWidth, card.clientHeight);
     const radius = diameter / 2;
 
-    circle.classList.add("ripple");
+    circle.className = "ripple";
     circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${e.clientX - card.offsetLeft - radius}px`;
-    circle.style.top = `${e.clientY - card.offsetTop - radius}px`;
+    circle.style.left = `${e.clientX - rect.left - radius}px`;
+    circle.style.top = `${e.clientY - rect.top - radius}px`;
 
-    const ripple = card.querySelector(".ripple");
-    if (ripple) ripple.remove();
+    const oldRipple = card.querySelector(".ripple");
+    if (oldRipple) oldRipple.remove();
 
     card.appendChild(circle);
 
     setTimeout(() => {
         window.location.href = url;
-    }, 300);
-}
-</script>
-
-</body>
-</html>/* รายละเอียดเกม */
-.description {
-    color: #c9d1d9;
-    font-size: 15px;
-    line-height: 1.7;
-    margin-bottom: 30px;
-}
-
-/* กล่องปุ่ม */
-.buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    align-items: center;
-}
-
-/* ปุ่ม */
-.btn {
-    position: relative;
-    overflow: hidden;
-    width: 220px;
-    padding: 14px;
-    font-size: 16px;
-    color: #fff;
-    background: #238636;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
-}
-
-.btn:hover {
-    background: #2ea043;
-}
-
-.btn:active {
-    transform: scale(0.96);
-}
-
-/* ปุ่มรูบิค (สีต่างนิดนึง) */
-.btn.rubik {
-    background: #1f6feb;
-}
-
-.btn.rubik:hover {
-    background: #388bfd;
-}
-
-/* Ripple */
-.ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    transform: scale(0);
-    animation: ripple 0.6s linear;
-    pointer-events: none;
-}
-
-@keyframes ripple {
-    to {
-        transform: scale(4);
-        opacity: 0;
-    }
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-    <h1>GAME MENU</h1>
-    <div class="subtitle">เลือกเกมที่ต้องการ</div>
-
-    <div class="description">
-        🎮 เลือกเล่นเกมฝึกสมอง<br>
-        🧠 เสริมทักษะการคิดและแก้ปัญหา
-    </div>
-
-    <div class="buttons">
-        <button class="btn" onclick="goNextPage(event, '24game.html')">
-            24 GAME
-        </button>
-
-        <button class="btn rubik" onclick="goNextPage(event, 'rubik.html')">
-            เกมรูบิค
-        </button>
-    </div>
-</div>
-
-<script>
-function goNextPage(e, url) {
-    const button = e.currentTarget;
-
-    // สร้าง Ripple
-    const circle = document.createElement("span");
-    const diameter = Math.max(button.clientWidth, button.clientHeight);
-    const radius = diameter / 2;
-
-    circle.classList.add("ripple");
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${e.clientX - button.offsetLeft - radius}px`;
-    circle.style.top = `${e.clientY - button.offsetTop - radius}px`;
-
-    const ripple = button.querySelector(".ripple");
-    if (ripple) ripple.remove();
-
-    button.appendChild(circle);
-
-    // เปลี่ยนหน้า
-    setTimeout(() => {
-        window.location.href = url;
-    }, 300);
+    }, 250);
 }
 </script>
 
