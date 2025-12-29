@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>INSIDER</title>
+
 <style>
 body {
     margin: 0;
@@ -53,7 +54,6 @@ button:hover {
     justify-content: center;
     align-items: center;
     color: #58a6ff;
-    font-family: Arial, sans-serif;
 }
 
 .loading.show {
@@ -61,16 +61,41 @@ button:hover {
 }
 
 .queue {
-    font-size: 96px;
+    font-size: 48px;
     margin-top: 10px;
     transition: transform 0.3s;
 }
+
 .queue.highlight {
-    transform: scale(1.3);
+    transform: scale(1.2);
     color: #ffea00;
+}
+
+/* spinner มุมขวาล่าง */
+.spinner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top: 4px solid #58a6ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: none;
+    z-index: 9999;
+}
+
+.spinner.show {
+    display: block;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 </style>
 </head>
+
 <body>
 
 <div class="card">
@@ -82,8 +107,11 @@ button:hover {
 
 <div id="loading" class="loading">
     <div>เหลืออีก</div>
-    <div id="queue" class="queue">⏳</div>
+    <div id="queue" class="queue">กำลังตรวจสอบ…</div>
 </div>
+
+<!-- spinner ต้องอยู่นอก style -->
+<div id="spinner" class="spinner"></div>
 
 <audio id="alertSound" src="https://www.myinstants.com/media/sounds/bell.mp3"></audio>
 
@@ -98,14 +126,23 @@ let intervalId = null;
 function reserve() {
     userName = document.getElementById("name").value.trim();
     const cls = document.getElementById("class").value.trim();
-    if (!userName || !cls) return alert("กรุณากรอกชื่อและชั้น/เบอร์ติดต่อ");
+
+    if (!userName || !cls) {
+        alert("กรุณากรอกชื่อและชั้น/เบอร์ติดต่อ");
+        return;
+    }
 
     document.getElementById("loading").classList.add("show");
-    document.getElementById("queue").innerText = "⏳";
+    document.getElementById("spinner").classList.add("show");
+    document.getElementById("queue").innerText = "กำลังโหลด…";
 
     fetch(WEB_APP_URL, {
         method: "POST",
-        body: new URLSearchParams({name: userName, className: cls, game: `${mygame}`})
+        body: new URLSearchParams({
+            name: userName,
+            className: cls,
+            game: mygame
+        })
     })
     .then(() => {
         intervalId = setInterval(updateQueue, 2000);
@@ -113,21 +150,18 @@ function reserve() {
     })
     .catch(err => {
         console.error(err);
-        document.getElementById("queue").innerText = "ERR";
+        document.getElementById("queue").innerText = "เกิดข้อผิดพลาด";
+        document.getElementById("spinner").classList.remove("show");
     });
 }
 
 function notifyUser(msg) {
-    try {
-        if(Notification.permission === "granted") {
-            new Notification(msg);
-        } else if(Notification.permission !== "denied") {
-            Notification.requestPermission().then(p => {
-                if(p === "granted") new Notification(msg);
-            });
-        }
-    } catch(e) {
-        console.warn("Notification failed:", e);
+    if (Notification.permission === "granted") {
+        new Notification(msg);
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(p => {
+            if (p === "granted") new Notification(msg);
+        });
     }
 }
 
@@ -135,15 +169,15 @@ function updateQueue() {
     fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=${mygame}`)
     .then(r => r.text())
     .then(q => {
-        q = q.trim();
-        const qInt = parseInt(q, 10);
+        const qInt = parseInt(q.trim(), 10);
         const queueEl = document.getElementById("queue");
 
-        if(isNaN(qInt) || qInt === 0){
+        if (isNaN(qInt) || qInt === 0) {
             queueEl.innerText = "ถึงคิวของคุณแล้ว 😀";
             queueEl.classList.add("highlight");
             document.getElementById("alertSound").play();
             notifyUser("ถึงคิวคุณแล้ว!");
+            document.getElementById("spinner").classList.remove("show");
             clearInterval(intervalId);
         } else {
             queueEl.innerText = qInt;
