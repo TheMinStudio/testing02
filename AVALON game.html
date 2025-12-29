@@ -173,7 +173,7 @@ function updateQueue() {
 
         if (isNaN(qInt) || qInt === 0) {
             queueEl.innerText = "ถึงคิวของคุณแล้ว 😀";
-            queueEl.classList.add("highlight");
+            queueEl.classList.add("highlight", "small");
             document.getElementById("alertSound").play();
             notifyUser("ถึงคิวคุณแล้ว!");
             document.getElementById("spinner").classList.remove("show");
