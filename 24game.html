@@ -3,18 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>จองเกม 24</title>
-function updateQueue() {
-  fetch(WEB_APP_URL + "?name=" + encodeURIComponent(userName) + "&game=24Game")
-    .then(r => r.text())
-    .then(q => {
-      console.log("QUEUE FROM SERVER =", q);
-      document.getElementById("queue").innerText = q;
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById("queue").innerText = "ERR";
-    });
-}
+
 <style>
 body {
   margin: 0;
@@ -99,7 +88,6 @@ function reserve() {
   document.getElementById("loading").classList.add("show");
   document.getElementById("queue").innerText = "⏳";
 
-  // 👉 รอให้ POST เสร็จก่อน
   fetch(WEB_APP_URL, {
     method: "POST",
     body: new URLSearchParams({
@@ -109,9 +97,8 @@ function reserve() {
     })
   })
   .then(() => {
-    // เริ่มอัปเดตคิวทุก 2 วิ
     intervalId = setInterval(updateQueue, 2000);
-    updateQueue(); // เรียกทันทีครั้งแรก
+    updateQueue();
   });
 }
 
@@ -123,13 +110,11 @@ function updateQueue() {
   )
   .then(r => r.text())
   .then(q => {
-    if (q === "-1" || q === "0") {
-      document.getElementById("queue").innerText = "…";
-    } else {
-      document.getElementById("queue").innerText = q;
-    }
+    console.log("QUEUE FROM SERVER =", q);
+    document.getElementById("queue").innerText = q;
   })
-  .catch(() => {
+  .catch(err => {
+    console.error(err);
     document.getElementById("queue").innerText = "ERR";
   });
 }
