@@ -44,7 +44,7 @@ function reserve() {
 
   fetch(WEB_APP_URL, {
     method: "POST",
-    body: new URLSearchParams({name:userName,className:cls,game:"24Game"})
+    body: new URLSearchParams({name:userName,className:cls,game:"WEREWOLF"})
   })
   .then(() => {
     intervalId = setInterval(updateQueue, 2000);
