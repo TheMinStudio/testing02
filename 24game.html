@@ -4,52 +4,13 @@
 <meta charset="UTF-8">
 <title>จองเกม 24</title>
 <style>
-body {
-  margin: 0;
-  height: 100vh;
-  background: #0d1117;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: Arial;
-  color: white;
-}
-.card {
-  background: #161b22;
-  padding: 30px;
-  border-radius: 12px;
-  width: 300px;
-}
-input, button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 12px;
-  border-radius: 8px;
-  border: none;
-}
-button {
-  background: #2ea043;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
-.loading {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.loading.show {
-  display: flex;
-}
-.queue {
-  font-size: 64px;
-  color: #58a6ff;
-  margin-top: 10px;
-}
+body { margin:0; height:100vh; background:#0d1117; display:flex; justify-content:center; align-items:center; font-family:Arial; color:white;}
+.card { background:#161b22; padding:30px; border-radius:12px; width:300px;}
+input,button { width:100%; padding:12px; margin-top:12px; border-radius:8px; border:none;}
+button { background:#2ea043; color:white; font-size:16px; cursor:pointer;}
+.loading { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:none; flex-direction:column; justify-content:center; align-items:center;}
+.loading.show { display:flex;}
+.queue { font-size:64px; color:#58a6ff; margin-top:10px;}
 </style>
 </head>
 <body>
@@ -57,7 +18,7 @@ button {
 <div class="card">
   <h2>จองเกม 24</h2>
   <input id="name" placeholder="ชื่อ">
-  <input id="class" placeholder="ชั้น">
+  <input id="class" placeholder="ชั้น/เบอร์ติดต่อ">
   <button onclick="reserve()">จอง</button>
 </div>
 
@@ -69,30 +30,25 @@ button {
 <audio id="alertSound" src="https://www.myinstants.com/media/sounds/bell.mp3"></audio>
 
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz68xgRvKN6x8_rihCBKtprB5X6K8by6goYBhbIVhc84-Zl4BxZKqUdDd4SVfJ57Wpb/exec"; // ใส่ URL ของ Web App ที่ deploy แล้ว
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby9gH1pdMv8CN4gOaPv5wb7Qi7_xDHFzs6ahb_kK2Gn8_qkYfxzyRStMTvTRLfi2Uk/exec";
 let userName = "";
 let intervalId = null;
 
 function reserve() {
   userName = document.getElementById("name").value.trim();
   const cls = document.getElementById("class").value.trim();
-  if (!userName || !cls) return alert("กรุณากรอกชื่อและชั้น");
+  if (!userName || !cls) return alert("กรุณากรอกชื่อและชั้น/เบอร์ติดต่อ");
 
   document.getElementById("loading").classList.add("show");
   document.getElementById("queue").innerText = "⏳";
 
   fetch(WEB_APP_URL, {
     method: "POST",
-    body: new URLSearchParams({
-      name: userName,
-      className: cls,
-      game: "24Game"
-    })
+    body: new URLSearchParams({ name: userName, className: cls, game: "24Game" })
   })
   .then(() => {
-    // เริ่มอัปเดตคิวทุก 2 วิ
     intervalId = setInterval(updateQueue, 2000);
-    updateQueue(); // เรียกครั้งแรกทันที
+    updateQueue();
   })
   .catch(err => {
     console.error(err);
@@ -114,15 +70,12 @@ function updateQueue() {
   fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=24Game`)
     .then(r => r.text())
     .then(q => {
-      q = q.trim(); // ✅ แก้ปัญหา ERR ตอนคิว 1
+      q = q.trim(); // ลบ whitespace
       const qInt = parseInt(q, 10);
       const queueEl = document.getElementById("queue");
 
-      if (isNaN(qInt) || qInt === 0) {
-        queueEl.innerText = "…";
-      } else {
-        queueEl.innerText = qInt;
-      }
+      if (!q || isNaN(qInt) || qInt === 0) queueEl.innerText = "…";
+      else queueEl.innerText = qInt;
 
       if (qInt === 1) {
         document.getElementById("alertSound").play();
