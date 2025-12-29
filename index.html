@@ -13,28 +13,158 @@ body {
     justify-content: center;
     align-items: center;
     font-family: Arial, sans-serif;
+    color: #f0f6fc;
 }
 
-/* กล่องเมนู */
+/* กล่องรวม */
 .container {
     text-align: center;
-    max-width: 420px;
+}
+
+/* หัวข้อ */
+h1 {
+    font-size: 46px;
+    margin-bottom: 40px;
+}
+
+/* Grid ช่องเกม */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 260px);
+    gap: 30px;
+}
+
+/* การ์ด */
+.card {
+    background: #161b22;
+    border-radius: 16px;
+    padding: 28px 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.6);
 }
 
 /* ชื่อเกม */
-h1 {
-    color: #f0f6fc;
-    font-size: 48px;
-    margin-bottom: 10px;
+.card h2 {
+    margin: 0;
+    font-size: 28px;
 }
 
-/* คำอธิบายสั้น */
-.subtitle {
+/* คำอธิบาย */
+.card p {
+    margin: 12px 0 22px;
+    font-size: 14px;
     color: #8b949e;
-    margin-bottom: 18px;
+    line-height: 1.6;
 }
 
-/* รายละเอียดเกม */
+/* ปุ่มในช่อง */
+.card button {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    color: #fff;
+}
+
+/* ปุ่มเฉพาะเกม */
+.btn-24 {
+    background: #2ea043;
+}
+
+.btn-24:hover {
+    background: #3fb950;
+}
+
+.btn-rubik {
+    background: #1f6feb;
+}
+
+.btn-rubik:hover {
+    background: #388bfd;
+}
+
+/* Ripple */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>เลือกเกม</h1>
+
+    <div class="grid">
+        <!-- ช่องเกม 24 -->
+        <div class="card" onclick="goNextPage(event, '24game.html')">
+            <h2>24 GAME</h2>
+            <p>
+                นำเลข 4 ตัวมาบวก ลบ คูณ หาร<br>
+                ให้ได้ผลลัพธ์เท่ากับ 24
+            </p>
+            <button class="btn-24">เริ่มเล่น</button>
+        </div>
+
+        <!-- ช่องรูบิค -->
+        <div class="card" onclick="goNextPage(event, 'rubik.html')">
+            <h2>เกมรูบิค</h2>
+            <p>
+                เกมปริศนา 3D<br>
+                ฝึกการคิดเป็นขั้นตอน
+            </p>
+            <button class="btn-rubik">เริ่มเล่น</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function goNextPage(e, url) {
+    const card = e.currentTarget;
+
+    const circle = document.createElement("span");
+    const diameter = Math.max(card.clientWidth, card.clientHeight);
+    const radius = diameter / 2;
+
+    circle.classList.add("ripple");
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${e.clientX - card.offsetLeft - radius}px`;
+    circle.style.top = `${e.clientY - card.offsetTop - radius}px`;
+
+    const ripple = card.querySelector(".ripple");
+    if (ripple) ripple.remove();
+
+    card.appendChild(circle);
+
+    setTimeout(() => {
+        window.location.href = url;
+    }, 300);
+}
+</script>
+
+</body>
+</html>/* รายละเอียดเกม */
 .description {
     color: #c9d1d9;
     font-size: 15px;
