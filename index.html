@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>24 GAME</title>
+<title>GAME MENU</title>
 
 <style>
 body {
@@ -39,7 +39,15 @@ h1 {
     color: #c9d1d9;
     font-size: 15px;
     line-height: 1.7;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
+}
+
+/* กล่องปุ่ม */
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
 }
 
 /* ปุ่ม */
@@ -65,6 +73,15 @@ h1 {
     transform: scale(0.96);
 }
 
+/* ปุ่มรูบิค (สีต่างนิดนึง) */
+.btn.rubik {
+    background: #1f6feb;
+}
+
+.btn.rubik:hover {
+    background: #388bfd;
+}
+
 /* Ripple */
 .ripple {
     position: absolute;
@@ -87,21 +104,27 @@ h1 {
 <body>
 
 <div class="container">
-    <h1>24 GAME</h1>
-    <div class="subtitle">เกมฝึกสมอง</div>
+    <h1>GAME MENU</h1>
+    <div class="subtitle">เลือกเกมที่ต้องการ</div>
 
     <div class="description">
-        นำเลข <b>4 ตัว</b> ที่กำหนดมาใช้<br>
-        โดยสามารถ <b>บวก ลบ คูณ หาร</b> ได้<br>
-        เป้าหมายคือทำให้ผลลัพธ์สุดท้าย<br>
-        <b style="color:#58a6ff;">เท่ากับ 24</b>
+        🎮 เลือกเล่นเกมฝึกสมอง<br>
+        🧠 เสริมทักษะการคิดและแก้ปัญหา
     </div>
 
-    <button class="btn" onclick="goNextPage(event)">จอง</button>
+    <div class="buttons">
+        <button class="btn" onclick="goNextPage(event, '24game.html')">
+            24 GAME
+        </button>
+
+        <button class="btn rubik" onclick="goNextPage(event, 'rubik.html')">
+            เกมรูบิค
+        </button>
+    </div>
 </div>
 
 <script>
-function goNextPage(e) {
+function goNextPage(e, url) {
     const button = e.currentTarget;
 
     // สร้าง Ripple
@@ -121,7 +144,7 @@ function goNextPage(e) {
 
     // เปลี่ยนหน้า
     setTimeout(() => {
-        window.location.href = "24game.html";
+        window.location.href = url;
     }, 300);
 }
 </script>
