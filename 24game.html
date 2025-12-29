@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <title>จองเกม 24</title>
-
+function updateQueue() {
+  fetch(WEB_APP_URL + "?name=" + encodeURIComponent(userName) + "&game=24Game")
+    .then(r => r.text())
+    .then(q => {
+      console.log("QUEUE FROM SERVER =", q);
+      document.getElementById("queue").innerText = q;
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("queue").innerText = "ERR";
+    });
+}
 <style>
 body {
   margin: 0;
@@ -75,7 +86,7 @@ button {
 
 <script>
 const WEB_APP_URL =
-"https://script.google.com/macros/s/AKfycbwiWGgfBua-tYUnh7vEWaEVxaqoT8j18szeP-A--qA9EL2L6dVAjwefuSAh4JPWI841/exec";
+"https://script.google.com/macros/s/AKfycbxZjZ5cxkTzJkvl2_pOmtX0Cfwd-fmK5O0X4luqdoIqwhkLCyCtdvvtb-xQRW_xyY4o/exec";
 
 let userName = "";
 let intervalId = null;
