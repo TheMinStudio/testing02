@@ -35,6 +35,7 @@ button {
   background: #2ea043;
   color: white;
   font-size: 16px;
+  cursor: pointer;
 }
 
 .loading {
@@ -77,32 +78,49 @@ const WEB_APP_URL =
 "https://script.google.com/macros/s/AKfycbwiWGgfBua-tYUnh7vEWaEVxaqoT8j18szeP-A--qA9EL2L6dVAjwefuSAh4JPWI841/exec";
 
 let userName = "";
+let intervalId = null;
 
 function reserve() {
-  userName = document.getElementById("name").value;
-  const cls = document.getElementById("class").value;
+  userName = document.getElementById("name").value.trim();
+  const cls = document.getElementById("class").value.trim();
   if (!userName || !cls) return;
 
   document.getElementById("loading").classList.add("show");
+  document.getElementById("queue").innerText = "⏳";
 
+  // 👉 รอให้ POST เสร็จก่อน
   fetch(WEB_APP_URL, {
     method: "POST",
     body: new URLSearchParams({
       name: userName,
-      class: cls,
+      className: cls,
       game: "24Game"
     })
+  })
+  .then(() => {
+    // เริ่มอัปเดตคิวทุก 2 วิ
+    intervalId = setInterval(updateQueue, 2000);
+    updateQueue(); // เรียกทันทีครั้งแรก
   });
-
-  setInterval(updateQueue, 2000);
 }
 
 function updateQueue() {
-  fetch(WEB_APP_URL + "?name=" + encodeURIComponent(userName) + "&game=24Game")
-    .then(r => r.text())
-    .then(q => {
+  fetch(
+    WEB_APP_URL +
+    "?name=" + encodeURIComponent(userName) +
+    "&game=24Game"
+  )
+  .then(r => r.text())
+  .then(q => {
+    if (q === "-1" || q === "0") {
+      document.getElementById("queue").innerText = "…";
+    } else {
       document.getElementById("queue").innerText = q;
-    });
+    }
+  })
+  .catch(() => {
+    document.getElementById("queue").innerText = "ERR";
+  });
 }
 </script>
 
