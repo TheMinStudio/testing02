@@ -25,18 +25,18 @@ h1 {
     margin-bottom: 40px;
 }
 
-/* Grid */
 .grid {
     display: grid;
-    grid-template-columns: repeat(2, 260px);
+    grid-template-columns: repeat(3, 260px);
     gap: 30px;
 }
 
-/* Mobile */
+@media (max-width: 900px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 600px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
+    .grid { grid-template-columns: 1fr; }
 }
 
 .card {
@@ -45,9 +45,7 @@ h1 {
     padding: 28px 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: 0.25s;
 }
 
 .card:hover {
@@ -64,40 +62,29 @@ h1 {
     margin: 12px 0 22px;
     font-size: 14px;
     color: #8b949e;
-    line-height: 1.6;
 }
 
 .card button {
     padding: 10px 22px;
     border-radius: 8px;
     border: none;
-    font-size: 14px;
     cursor: pointer;
     color: #fff;
 }
 
-/* ปุ่ม */
-.btn-24 { background: #2ea043; }
-.btn-24:hover { background: #3fb950; }
+/* Buttons */
+.btn-avalon { background: #2ea043; }
+.btn-insider { background: #1f6feb; }
+.btn-citadels { background: #ff6b6b; }
+.btn-coup { background: #f9ca24; color:#000; }
+.btn-hatan { background: #9b59b6; }
+.btn-crabs { background: #e67e22; }
+.btn-muffin { background: #e84393; }
+.btn-tycoon { background: #00b894; }
+.btn-moth { background: #fd79a8; }
 
-.btn-rubik { background: #1f6feb; }
-.btn-rubik:hover { background: #388bfd; }
-
-/* Ripple */
-.ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    transform: scale(0);
-    animation: ripple 0.6s linear;
-    pointer-events: none;
-}
-
-@keyframes ripple {
-    to {
-        transform: scale(4);
-        opacity: 0;
-    }
+.card button:hover {
+    filter: brightness(1.2);
 }
 </style>
 </head>
@@ -105,55 +92,78 @@ h1 {
 <body>
 
 <div class="container">
-    <h1>เลือกเกมที่จะจอง</h1>
+<h1>เลือกเกมที่จะจอง</h1>
 
-    <div class="grid">
-        <!-- 24 GAME -->
-        <div class="card" onclick="goNextPage(event, 'AVALON game.html')">
-            <h2>AVALON</h2>
-            <p>
-                ทำภารกิจให้สำเร็จและเปิดโปงผู้ทรยศ<br>
-            </p>
-            <button class="btn-24" onclick="goNextPage(event, 'AVALON game.html')">
-                เริ่มจอง
-            </button>
-        </div>
+<div class="grid">
 
-        <!-- Rubik -->
-        <div class="card" onclick="goNextPage(event, 'INSIDER .html')">
-            <h2>INSIDER</h2>
-            <p>
-                คุณต้องหาคำตอบที่ถูกต้อง และค้นหา "Insider" ที่กำลังบงการ<br>
-            </p>
-            <button class="btn-rubik" onclick="goNextPage(event, 'INSIDER .html')">
-                เริ่มจอง
-            </button>
-        </div>
-    </div>
+<!-- INSIDER -->
+<div class="card" onclick="go('INSIDER .html')">
+    <h2>INSIDER</h2>
+    <p>คุณต้องหาคำตอบที่ถูกต้อง และค้นหา Insider</p>
+    <button class="btn-insider" onclick="btn(event,'INSIDER .html')">เริ่มจอง</button>
+</div>
+
+<!-- CITADELS -->
+<div class="card" onclick="go('citadels .html')">
+    <h2>CITADELS</h2>
+    <p>สร้างเมืองของคุณให้รุ่งเรือง</p>
+    <button class="btn-citadels" onclick="btn(event,'citadels .html')">เริ่มจอง</button>
+</div>
+
+<!-- COUP -->
+<div class="card" onclick="go('coup .html')">
+    <h2>COUP</h2>
+    <p>ลอบสังหารและควบคุมการเมือง</p>
+    <button class="btn-coup" onclick="btn(event,'coup .html')">เริ่มจอง</button>
+</div>
+
+<!-- HATAN -->
+<div class="card" onclick="go('hatan .html')">
+    <h2>HATAN</h2>
+    <p>เกมกลยุทธ์ที่ท้าทาย</p>
+    <button class="btn-hatan" onclick="btn(event,'hatan .html')">เริ่มจอง</button>
+</div>
+
+<!-- YOU'VE GOT CRABS -->
+<div class="card" onclick="go(`you've got crabs .html`)">
+    <h2>YOU'VE GOT CRABS</h2>
+    <p>ต่อสู้และรวบรวมปู</p>
+    <button class="btn-crabs" onclick="btn(event,`you've got crabs .html`)">เริ่มจอง</button>
+</div>
+
+<!-- มัฟฟินไทม์ -->
+<div class="card" onclick="go('มัฟฟินไทม์ .html')">
+    <h2>มัฟฟินไทม์</h2>
+    <p>แข่งทำขนม</p>
+    <button class="btn-muffin" onclick="btn(event,'มัฟฟินไทม์ .html')">เริ่มจอง</button>
+</div>
+
+<!-- เศรษฐี -->
+<div class="card" onclick="go('เศรษฐี .html')">
+    <h2>เศรษฐี</h2>
+    <p>สะสมทรัพย์สิน</p>
+    <button class="btn-tycoon" onclick="btn(event,'เศรษฐี .html')">เริ่มจอง</button>
+</div>
+
+<!-- แมลงเม่า -->
+<div class="card" onclick="go('แมลงเม่า .html')">
+    <h2>แมลงเม่า</h2>
+    <p>ต่อสู้และสร้างอาณาจักร</p>
+    <button class="btn-moth" onclick="btn(event,'แมลงเม่า .html')">เริ่มจอง</button>
+</div>
+
+
+</div>
 </div>
 
 <script>
-function goNextPage(e, url) {
-    const card = e.currentTarget.closest(".card");
-    const rect = card.getBoundingClientRect();
+function go(url) {
+    window.location.href = url;
+}
 
-    const circle = document.createElement("span");
-    const diameter = Math.max(card.clientWidth, card.clientHeight);
-    const radius = diameter / 2;
-
-    circle.className = "ripple";
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${e.clientX - rect.left - radius}px`;
-    circle.style.top = `${e.clientY - rect.top - radius}px`;
-
-    const oldRipple = card.querySelector(".ripple");
-    if (oldRipple) oldRipple.remove();
-
-    card.appendChild(circle);
-
-    setTimeout(() => {
-        window.location.href = url;
-    }, 250);
+function btn(e, url) {
+    e.stopPropagation();
+    go(url);
 }
 </script>
 
