@@ -114,7 +114,7 @@ button:hover {
 <audio id="alertSound" src="https://www.myinstants.com/media/sounds/bell.mp3"></audio>
 
 <script>
-let mygame = "Catan"; //ตัวแปรตรงนี้-------------------
+let mygame = "Catan";
 document.getElementById("gameTitle").innerText = mygame;
 
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyTnF-lhnXE757pYyZxCSilQOddR54qqMVxMYuFg0CMOeQ58L-Bkc0BF7Eo9cD_hBW-/exec";
@@ -142,51 +142,55 @@ function reserve() {
             game: mygame
         })
     })
-    .then(() => {
-        intervalId = setInterval(updateQueue, 2000);
+    .then(res => res.text())
+    .then(text => {
+        console.log("Response:", text);
+        // เริ่มอัปเดตสถานะคิว
+        clearInterval(intervalId);
+        intervalId = setInterval(updateQueue, 2500);
         updateQueue();
     })
     .catch(err => {
         console.error(err);
-        document.getElementById("queue").innerText = "เกิดข้อผิดพลาด";
+        document.getElementById("queue").innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อ";
         document.getElementById("spinner").classList.remove("show");
     });
 }
 
-function notifyUser(msg) {
-    if (Notification.permission === "granted") {
-        new Notification(msg);
-    } else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(p => {
-            if (p === "granted") new Notification(msg);
-        });
-    }
-}
-
 function updateQueue() {
-    fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=${mygame}`)
+    fetch(`${WEB_APP_URL}?name=${encodeURIComponent(userName)}&game=${encodeURIComponent(mygame)}`)
     .then(r => r.text())
-    .then(q => {
-        const qInt = Number(q.trim());
+    .then(text => {
+        console.log("Queue data:", text);
+        const cleaned = text.trim().replace(/[^\d-]/g, ""); // เอาเฉพาะตัวเลข
+        const qInt = Number(cleaned);
         const queueEl = document.getElementById("queue");
 
-        if (!isNaN(qInt) && qInt === 0) {
-            queueEl.innerText = "ถึงคิวของคุณแล้ว 😀";
-            queueEl.classList.add("highlight");
-            document.getElementById("alertSound").play();
-            //notifyUser("ถึงคิวคุณแล้ว!");
-            document.getElementById("spinner").classList.remove("show");
-            //notifyUser(intervalId);
-        } else if (!isNaN(qInt)) {
-            queueEl.innerText = qInt;
+        if (!text) {
+            queueEl.innerText = "ไม่มีข้อมูลจากเซิร์ฟเวอร์";
             queueEl.classList.remove("highlight");
+            return;
+        }
+
+        if (!isNaN(qInt)) {
+            if (qInt <= 0) {
+                queueEl.innerText = "ถึงคิวของคุณแล้ว 😀";
+                queueEl.classList.add("highlight");
+                document.getElementById("alertSound").play();
+                clearInterval(intervalId);
+                document.getElementById("spinner").classList.remove("show");
+            } else {
+                queueEl.innerText = qInt;
+                queueEl.classList.remove("highlight");
+            }
         } else {
-            queueEl.innerText = "ERR";
+            queueEl.innerText = "ข้อมูลไม่ถูกต้อง (" + text + ")";
+            queueEl.classList.remove("highlight");
         }
     })
     .catch(err => {
-        console.error(err);
-        document.getElementById("queue").innerText = "ERR";
+        console.error("Fetch error:", err);
+        document.getElementById("queue").innerText = "เชื่อมต่อไม่สำเร็จ";
     });
 }
 </script>
