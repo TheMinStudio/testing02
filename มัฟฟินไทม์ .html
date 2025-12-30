@@ -48,7 +48,7 @@ button:hover {
 .loading {
     position: fixed;
     inset: 0;
-    INSIDER(0,0,0,0.85);
+    background: rgba(0,0,0,0.85);
     display: none;
     flex-direction: column;
     justify-content: center;
@@ -149,7 +149,7 @@ function reserve() {
     .catch(err => {
         console.error(err);
         document.getElementById("queue").innerText = "เกิดข้อผิดพลาด";
-        document.getElementById("spinner")spinnerist.remove("show");
+        document.getElementById("spinner").classList.remove("show");
     });
 }
 
